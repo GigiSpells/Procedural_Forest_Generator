@@ -39,24 +39,31 @@ class Tree():
     def __init__(self):
         self.trunk_height = 2.5
         self.trunk_width = .25
-        self.canopy_height = 0
-        self.canopy_radius = 0
+        self.canopy_height = 2
+        self.canopy_width = 2
         self.grp_name = "myTree"
+
 
     def create(self):
         group_objs = []
         group_objs.append(self.create_trunk())
+        group_objs.append(self.create_canopy())
         cmds.group(group_objs, name=self.grp_name)
 
+
     def create_trunk(self):
-        self.trunk = cmds.polyCube(name="trunk",height=self.trunk_height
+        self.trunk_obj, self.trunk_node = cmds.polyCube(name="trunk",height=self.trunk_height
                         ,width=self.trunk_width, depth=self.trunk_width)
-        cmds.xform(self.trunk, pivots=[0, -self.trunk_height/2.0,0])
+        cmds.xform(self.trunk_obj, pivots=[0, -self.trunk_height/2.0,0])
         cmds.xform(translation=[0,self.trunk_height/2.0,0])
+        return self.trunk_obj
         
 
     def create_canopy(self):
-        pass
+        self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
+                        ,width=self.canopy_width, depth=self.canopy_width)
+        cmds.xform(translation=[0,self.trunk_height,0])
+        return self.canopy_obj
         # Create canopy with polyCone, polyCube, etc
         # Shape based on tree type
         # Oak = polySphere or polyCube
