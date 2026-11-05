@@ -37,17 +37,23 @@ class ForestGUI(QtWidgets.QDialog):
 class Tree():
 
     def __init__(self):
-        self.trunk_radius = 0
-        self.trunk_height = 0
+        self.trunk_height = 2.5
+        self.trunk_width = .25
         self.canopy_height = 0
         self.canopy_radius = 0
+        self.grp_name = "myTree"
+
+    def create(self):
+        group_objs = []
+        group_objs.append(self.create_trunk())
+        cmds.group(group_objs, name=self.grp_name)
 
     def create_trunk(self):
-        pass
-        # Create trunk with polyCone or tapered polyCylinder
-        # OR tapered polyCube
-        # Default size should differ by tree type
-
+        self.trunk = cmds.polyCube(name="trunk",height=self.trunk_height
+                        ,width=self.trunk_width, depth=self.trunk_width)
+        cmds.xform(self.trunk, pivots=[0, -self.trunk_height/2.0,0])
+        cmds.xform(translation=[0,self.trunk_height/2.0,0])
+        
 
     def create_canopy(self):
         pass
