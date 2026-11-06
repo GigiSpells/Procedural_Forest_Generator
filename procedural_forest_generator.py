@@ -6,7 +6,6 @@ from shiboken6 import wrapInstance
 
 
 # TODO:
-# Define layout & connections
 class ForestGUI(QtWidgets.QDialog):
 
     def __init__(self):
@@ -56,6 +55,8 @@ class Tree():
     def __init__(self):
         self.trunk_height = 2.5
         self.trunk_width = .25
+        self.trunk_taper_ratio = 8
+        self.trunk_taper = self.trunk_width/self.trunk_taper_ratio
         self.canopy_height = 2
         self.canopy_width = 2
         self.grp_name = "myTree"
@@ -73,7 +74,13 @@ class Tree():
                         ,width=self.trunk_width, depth=self.trunk_width)
         cmds.xform(self.trunk_obj, pivots=[0, -self.trunk_height/2.0,0])
         cmds.xform(translation=[0,self.trunk_height/2.0,0])
-        return self.trunk_obj
+        cmds.select("trunk")
+        cmds.polyMoveEdge("trunk.e[1]", translateZ=-self.trunk_taper)
+        cmds.polyMoveEdge("trunk.e[2]", translateZ=self.trunk_taper)
+        cmds.polyMoveEdge("trunk.e[6]", translateX=self.trunk_taper)
+        cmds.polyMoveEdge("trunk.e[7]", translateX=-self.trunk_taper)
+
+        return self.trunk_node
         
 
     def create_canopy(self):
@@ -97,3 +104,7 @@ class Forest(Tree):
     def __init__(self):
         self.density = 0
     pass
+
+# This class needs to:
+# Create an instance of 1+ trees based on user configurations
+# Pull from multiple tree types 
