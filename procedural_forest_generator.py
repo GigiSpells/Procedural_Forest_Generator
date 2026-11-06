@@ -11,7 +11,7 @@ class ForestGUI(QtWidgets.QDialog):
 
     def __init__(self):
         super().__init__()
-        self.tree = Tree()
+        self.tree_generator = Tree()
         self.setWindowTitle("Procedural Forest")
         self.create_layout()
         self.create_connections()
@@ -19,14 +19,19 @@ class ForestGUI(QtWidgets.QDialog):
 
     def create_layout(self):
         self.main_lay = QtWidgets.QVBoxLayout()
-        #self._form_ui()
+        self._form_ui()
         self.create_btn = QtWidgets.QPushButton("Create")
         self.main_lay.addWidget(self.create_btn)
         self.setLayout(self.main_lay)
 
-
+ 
     def _form_ui(self):
-        pass
+        self.form_layout = QtWidgets.QFormLayout()
+        self.trunk_h_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.trunk_h_dspnbx.setValue(0.50)
+        self.form_layout.addRow("Trunk Height:", self.trunk_h_dspnbx)
+
+        self.main_lay.addLayout(self.form_layout)
 
 
     def create_connections(self):
@@ -35,8 +40,10 @@ class ForestGUI(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def create(self):
-        self.tree.create()
-        
+        self.tree_generator.trunk_height = self.trunk_h_dspnbx.value()
+        self.tree_generator.create()
+
+
 # Creates an instance of a tree 
 # TODO: 
 # Add at least 2 tree types
