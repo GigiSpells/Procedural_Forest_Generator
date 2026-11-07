@@ -11,7 +11,10 @@ from shiboken6 import wrapInstance
     #main_win = omu.MQtUtil.mainWindow()
     #return wrapInstance(int(main_win), QtWidgets.QWidget)
 
-# TODO:
+# ForestGUI() TODO:
+ # modify _form_ui() to modify Forest() attributes
+ # use trunk & canopy size ranges for tree variety
+
 class ForestGUI(QtWidgets.QDialog):
 
     def __init__(self):
@@ -31,7 +34,7 @@ class ForestGUI(QtWidgets.QDialog):
         self.main_lay.addWidget(self.create_btn)
         self.setLayout(self.main_lay)
 
- 
+
     def _form_ui(self):
         self.form_layout = QtWidgets.QFormLayout()
 
@@ -77,10 +80,8 @@ class ForestGUI(QtWidgets.QDialog):
         self.tree_generator.grp_name = self.grp_name_le.text()
         self.tree_generator.create()
 
-
-# TODO: 
-# Add at least 2 tree types
-# Figure out how to do that ^ lol (Tree type classes that inhereit Tree?)
+# Tree() TODO:
+# Add second polyCube to oak canopy for more dynamic oak canopies
 
 class Tree():
 
@@ -123,10 +124,7 @@ class Tree():
         cmds.xform(translation=[0,self.trunk_height,0])
 
         return self.canopy_obj
-        # Create canopy with polyCone, polyCube, etc
-        # Shape based on tree type
-        # Oak = polySphere or polyCube
-        # Pine = polyCone or tapered polyCube
+
 
     def create_pine_canopy(self):
         self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
@@ -144,29 +142,31 @@ class Tree():
         self.canopy_grp = cmds.group(self.canopy_obj,self.canopy2_obj, name="canopy_GRP")
         return self.canopy_grp
 
+
     def define_tree_type(self):
         if self.type == "Oak":
             return self.create_oak_canopy()
         if self.type == "Pine":
             return self.create_pine_canopy()
 
+# Forest() TODO:
+# Initialize appropriate methods
+# Access Tree.type() to produce correct trees
+# Create loops that generate and distrubute trees
+# Prevent excessive tree overlap
+# Coordinate with ForestGUI()
 
-# Creates an instance of a forest
-# Creates # of trees based on density attributes & forest size
-# TODO:
-# Research how to define tree placement/density to Maya
-# Find way to define forest size by drawing a path?? (challenging feature)
 class Forest(Tree):
 
     def __init__(self):
-        #self.forest_type = ForestGUI.forest_type_cmbobx.currentText()
+        #self.type = ForestGUI.forest_type_cmbobx.currentText()
         self.trunk_height_range = 0
         self.trunk_width_range = 0
         self.canopy_height_range = 0
         self.canopy_width_range = 0
-        self.density = 0
+        self.density = 0 
     pass
 
 # This class needs to:
-# Create an instance of 1+ trees based on user configurations
-# Pull from multiple tree types 
+# Create an instance of 1+ trees based on user configurations 
+# "Mixed" Forest chooses tree type at random 
