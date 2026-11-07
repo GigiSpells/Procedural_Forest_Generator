@@ -17,8 +17,9 @@ class ForestGUI(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.tree_generator = Tree()
-        self.forest_generator = Forest()
-        self.setWindowTitle("Procedural Forest")
+        #self.forest_generator = Forest()
+        self.setWindowTitle("Forest Generator")
+        self.resize(300,200)
         self.create_layout()
         self.create_connections()
 
@@ -34,13 +35,26 @@ class ForestGUI(QtWidgets.QDialog):
     def _form_ui(self):
         self.form_layout = QtWidgets.QFormLayout()
 
+        #Add connection
         self.forest_type_cmbobx = QtWidgets.QComboBox()
         self.forest_type_cmbobx.addItems(["Oak","Pine","Mixed"])
         self.form_layout.addRow("Forest Type:", self.forest_type_cmbobx)
 
         self.trunk_h_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.trunk_h_dspnbx.setValue(0.50)
+        self.trunk_h_dspnbx.setValue(2.5)
         self.form_layout.addRow("Trunk Height:", self.trunk_h_dspnbx)
+
+        self.trunk_w_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.trunk_w_dspnbx.setValue(.25)
+        self.form_layout.addRow("Trunk Width:", self.trunk_w_dspnbx)
+
+        self.canopy_h_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.canopy_h_dspnbx.setValue(1.0)
+        self.form_layout.addRow("Canopy Height:", self.canopy_h_dspnbx)
+
+        self.canopy_w_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.canopy_w_dspnbx.setValue(1.0)
+        self.form_layout.addRow("Canopy Width:", self.canopy_w_dspnbx)
 
         self.grp_name_le = QtWidgets.QLineEdit()
         self.grp_name_le.setText(self.tree_generator.grp_name)
@@ -53,10 +67,12 @@ class ForestGUI(QtWidgets.QDialog):
         self.create_btn.clicked.connect(self.create)
         #self.forest_type_cmbobx.currentIndexChanged.connect()
 
-
     @QtCore.Slot()
     def create(self):
         self.tree_generator.trunk_height = self.trunk_h_dspnbx.value()
+        self.tree_generator.trunk_width = self.trunk_w_dspnbx.value()
+        self.tree_generator.canopy_height = self.canopy_h_dspnbx.value()
+        self.tree_generator.canopy_width = self.canopy_w_dspnbx.value()
         self.tree_generator.grp_name = self.grp_name_le.text()
         self.tree_generator.create()
 
