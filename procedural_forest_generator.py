@@ -49,11 +49,11 @@ class ForestGUI(QtWidgets.QDialog):
         self.form_layout.addRow("Trunk Width:", self.trunk_w_dspnbx)
 
         self.canopy_h_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.canopy_h_dspnbx.setValue(1.0)
+        self.canopy_h_dspnbx.setValue(2.0)
         self.form_layout.addRow("Canopy Height:", self.canopy_h_dspnbx)
 
         self.canopy_w_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.canopy_w_dspnbx.setValue(1.0)
+        self.canopy_w_dspnbx.setValue(2.0)
         self.form_layout.addRow("Canopy Width:", self.canopy_w_dspnbx)
 
         self.grp_name_le = QtWidgets.QLineEdit()
@@ -77,13 +77,10 @@ class ForestGUI(QtWidgets.QDialog):
         self.tree_generator.create()
 
 
-# Creates an instance of a tree 
 # TODO: 
 # Add at least 2 tree types
 # Figure out how to do that ^ lol (Tree type classes that inhereit Tree?)
-# Maybe create "tree age" quality that sets a range of avg tree sizes
-# Allows user to decide tree size without picking numbers idk
-# Define create functions
+
 class Tree():
 
     def __init__(self):
@@ -117,7 +114,7 @@ class Tree():
         return self.trunk_obj
         
 
-    def create_canopy(self):
+    #def create_canopy(self):
         self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
                         ,width=self.canopy_width, depth=self.canopy_width)
         cmds.xform(translation=[0,self.trunk_height,0])
@@ -127,6 +124,21 @@ class Tree():
         # Shape based on tree type
         # Oak = polySphere or polyCube
         # Pine = polyCone or tapered polyCube
+
+    def create_pine_canopy(self):
+        self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
+                        ,width=self.canopy_width, depth=self.canopy_width)
+        cmds.xform(translation=[0,self.trunk_height,0])
+        cmds.polyMoveEdge("canopy.e[1]", translateZ=-self.canopy_width/4)
+        cmds.polyMoveEdge("canopy.e[2]", translateZ=self.canopy_width/4)
+        cmds.polyMoveEdge("canopy.e[6]", translateX=self.canopy_width/4)
+        cmds.polyMoveEdge("canopy.e[7]", translateX=-self.canopy_width/4)
+        self.canopy2_obj = cmds.duplicate(self.canopy_obj, name="canopy2")
+        cmds.xform(self.canopy2_obj, translation=[0,self.canopy_height*1.7,0])
+
+        self.canopy_grp = cmds.group(self.canopy_obj,self.canopy2_obj, name="canopy_GRP")
+        return self.canopy_grp
+
 
 
 # Creates an instance of a forest
