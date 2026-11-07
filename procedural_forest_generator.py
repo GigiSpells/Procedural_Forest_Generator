@@ -65,10 +65,11 @@ class ForestGUI(QtWidgets.QDialog):
 
     def create_connections(self):
         self.create_btn.clicked.connect(self.create)
-        #self.forest_type_cmbobx.currentIndexChanged.connect()
+
 
     @QtCore.Slot()
     def create(self):
+        self.tree_generator.type = self.forest_type_cmbobx.currentText()
         self.tree_generator.trunk_height = self.trunk_h_dspnbx.value()
         self.tree_generator.trunk_width = self.trunk_w_dspnbx.value()
         self.tree_generator.canopy_height = self.canopy_h_dspnbx.value()
@@ -84,6 +85,7 @@ class ForestGUI(QtWidgets.QDialog):
 class Tree():
 
     def __init__(self):
+        self.type = "Oak"
         self.trunk_height = 2.5
         self.trunk_width = .25
         self.trunk_taper_ratio = 8
@@ -96,7 +98,7 @@ class Tree():
     def create(self):
         group_objs = []
         group_objs.append(self.create_trunk())
-        group_objs.append(self.create_canopy())
+        group_objs.append(self.define_tree_type())
         cmds.group(group_objs, name=self.grp_name)
 
 
@@ -114,9 +116,10 @@ class Tree():
         return self.trunk_obj
         
 
-    #def create_canopy(self):
+    def create_oak_canopy(self):
         self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
                         ,width=self.canopy_width, depth=self.canopy_width)
+        cmds.xform(self.canopy_obj, pivots=[0, -self.canopy_height/2.0,0])
         cmds.xform(translation=[0,self.trunk_height,0])
 
         return self.canopy_obj
@@ -128,17 +131,24 @@ class Tree():
     def create_pine_canopy(self):
         self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
                         ,width=self.canopy_width, depth=self.canopy_width)
+        cmds.xform(self.canopy_obj, pivots=[0, -self.canopy_height/2.0,0])
         cmds.xform(translation=[0,self.trunk_height,0])
         cmds.polyMoveEdge("canopy.e[1]", translateZ=-self.canopy_width/4)
         cmds.polyMoveEdge("canopy.e[2]", translateZ=self.canopy_width/4)
         cmds.polyMoveEdge("canopy.e[6]", translateX=self.canopy_width/4)
         cmds.polyMoveEdge("canopy.e[7]", translateX=-self.canopy_width/4)
+
         self.canopy2_obj = cmds.duplicate(self.canopy_obj, name="canopy2")
-        cmds.xform(self.canopy2_obj, translation=[0,self.canopy_height*1.7,0])
+        cmds.xform(self.canopy2_obj, translation=[0,self.canopy_height*1.6,0])
 
         self.canopy_grp = cmds.group(self.canopy_obj,self.canopy2_obj, name="canopy_GRP")
         return self.canopy_grp
 
+    def define_tree_type(self):
+        if self.type == "Oak":
+            return self.create_oak_canopy()
+        if self.type == "Pine":
+            return self.create_pine_canopy()
 
 
 # Creates an instance of a forest
