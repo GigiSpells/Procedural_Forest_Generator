@@ -1,9 +1,14 @@
 import importlib
 
-from maya import cmds
+import maya.cmds as cmds
 from PySide6 import QtWidgets, QtCore
 from shiboken6 import wrapInstance
 
+import maya.OpenMayaUI as omu
+
+def get_main_maya_win():
+    main_win = omu.MQtUtil.mainWindow()
+    return wrapInstance(int(main_win), QtWidgets.QWidget)
 
 # TODO:
 class ForestGUI(QtWidgets.QDialog):
