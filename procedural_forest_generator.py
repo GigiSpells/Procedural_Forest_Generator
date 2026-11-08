@@ -85,8 +85,8 @@ class ForestGUI(QtWidgets.QDialog):
 
 class Tree():
 
-    def __init__(self):
-        self.type = "Oak"
+    def __init__(self, type="Oak"):
+        self.type = type
         self.trunk_height = 2.5
         self.trunk_width = .25
         self.trunk_taper_ratio = 8
@@ -156,7 +156,7 @@ class Tree():
 # Prevent excessive tree overlap
 # Coordinate with ForestGUI()
 
-class Forest(Tree):
+class Forest():
 
     def __init__(self):
         #self.type = ForestGUI.forest_type_cmbobx.currentText()
@@ -164,8 +164,22 @@ class Forest(Tree):
         self.trunk_width_range = 0
         self.canopy_height_range = 0
         self.canopy_width_range = 0
-        self.density = 0 
-    pass
+        self.density = 0
+        self.tree_types = ["Oak", "Pine", "Mixed"]
+        self.trees = []
+
+    def create_trees(self):
+        self.tree = Tree(self.type)
+        pass
+
+
+    def distribute_trees(self):
+        pass
+
+
+    def create(self):
+        pass
+
 
 # This class needs to:
 # Create an instance of 1+ trees based on user configurations 
