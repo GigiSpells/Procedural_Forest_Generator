@@ -5,21 +5,17 @@ import maya.cmds as cmds
 from PySide6 import QtWidgets, QtCore
 from shiboken6 import wrapInstance
 
-#import maya.OpenMayaUI as omu
+import maya.OpenMayaUI as omu
 
-#def get_main_maya_win():
-    #main_win = omu.MQtUtil.mainWindow()
-    #return wrapInstance(int(main_win), QtWidgets.QWidget)
+def get_main_maya_win():
+    main_win = omu.MQtUtil.mainWindow()
+    return wrapInstance(int(main_win), QtWidgets.QWidget)
 
-# ForestGUI() TODO:
- # modify _form_ui() to modify Forest() attributes
- # use trunk & canopy size ranges for tree variety
 
 class ForestGUI(QtWidgets.QDialog):
 
     def __init__(self):
         super().__init__()
-        self.tree_gen = Tree()
         self.forest_gen = Forest()
         self.setWindowTitle("Forest Generator")
         self.resize(300,200)
@@ -41,26 +37,25 @@ class ForestGUI(QtWidgets.QDialog):
         self.trunk_h_min.setRange(0.1, 10.0)
         self.trunk_h_min.setDecimals(2)
         self.trunk_h_min.setSingleStep(0.1)
-        self.trunk_h_min.setValue(2.0)
+        self.trunk_h_min.setValue(1.5)
 
         self.trunk_h_max = QtWidgets.QDoubleSpinBox()
         self.trunk_h_max.setRange(0.1, 10.0)
         self.trunk_h_max.setDecimals(2)
         self.trunk_h_max.setSingleStep(0.1)
-        self.trunk_h_max.setValue(3.0)
-
+        self.trunk_h_max.setValue(6.0)
 
         self.trunk_w_min = QtWidgets.QDoubleSpinBox()
-        self.trunk_w_min.setRange(0.1, 10.0)
+        self.trunk_w_min.setRange(0.1, 3.0)
         self.trunk_w_min.setDecimals(2)
         self.trunk_w_min.setSingleStep(0.1)
-        self.trunk_w_min.setValue(2.0)
+        self.trunk_w_min.setValue(0.10)
 
         self.trunk_w_max = QtWidgets.QDoubleSpinBox()
-        self.trunk_w_max.setRange(0.1, 10.0)
+        self.trunk_w_max.setRange(0.1, 3.0)
         self.trunk_w_max.setDecimals(2)
         self.trunk_w_max.setSingleStep(0.1)
-        self.trunk_w_max.setValue(3.0)
+        self.trunk_w_max.setValue(0.50)
 
 
     def _set_canopy_parameters(self):
@@ -123,7 +118,7 @@ class ForestGUI(QtWidgets.QDialog):
         self.form_layout.addRow("Canopy Width Max:", self.canopy_w_max)
 
         self.grp_name_le = QtWidgets.QLineEdit()
-        self.grp_name_le.setText(self.tree_gen.grp_name)
+        self.grp_name_le.setText(self.forest_gen.grp_name)
         self.form_layout.addRow("Group Name:", self.grp_name_le)
 
         self.main_lay.addLayout(self.form_layout)
@@ -138,7 +133,24 @@ class ForestGUI(QtWidgets.QDialog):
         self.forest_gen.type = self.forest_type_cmbobx.currentText()
         self.forest_gen.size = self.size_cmbobx.currentText()
         self.forest_gen.density = self.density_cmbobx.currentText()
-        
+        self.forest_gen.trunk_h_range = (
+        self.trunk_h_min.value(),
+        self.trunk_h_max.value(),
+    )
+        self.forest_gen.trunk_w_range = (
+        self.trunk_w_min.value(),
+        self.trunk_w_max.value(),
+    )
+        self.forest_gen.canopy_h_range = (
+        self.canopy_h_min.value(),
+        self.canopy_h_max.value(),
+    )
+        self.forest_gen.canopy_w_range = (
+        self.canopy_w_min.value(),
+        self.canopy_w_max.value(),
+    )
+
+        self.forest_gen.grp_name = self.grp_name_le.text()
         self.forest_gen.create()
 
 
@@ -153,7 +165,7 @@ class Tree():
         self.trunk_taper = self.trunk_width/self.trunk_taper_ratio
         self.canopy_height = 2
         self.canopy_width = 2
-        self.grp_name = "myTree"
+        self.grp_name = "Tree"
 
 
     def create(self):
@@ -227,14 +239,14 @@ class Forest():
         self.type = "Oak"
         self.tree_types = ["Oak", "Pine"]
         self.area_size = {
-            "Small": 50.0,
-            "Medium": 100.0,
-            "Large": 150.0,
+            "Small": 25.0,
+            "Medium": 50.0,
+            "Large": 100.0,
         }
         self.min_spacing = {
-            "Sparse": 20.0,
-            "Average": 11.25,
-            "Dense": 6.25
+            "Sparse": 9.0,
+            "Average": 6.25,
+            "Dense": 2.5
         }
         self.size = "Small"
         self.density = "Average"
@@ -243,6 +255,7 @@ class Forest():
         self.canopy_height_range = 0
         self.canopy_width_range = 0
         self.trees = []
+        self.grp_name = "Forest_GRP"
 
 
     def create_trees(self):
@@ -265,13 +278,19 @@ class Forest():
             )
 
             tree = Tree(tree_type)
+
+            tree.trunk_height = random.uniform(*self.trunk_h_range)
+            tree.trunk_width = random.uniform(*self.trunk_w_range)
+            tree.canopy_height = random.uniform(*self.canopy_h_range)
+            tree.canopy_width = random.uniform(*self.canopy_w_range)
+
             tree.grp_name = f"tree{i + 1}"
             group_name = tree.create()
 
             cmds.xform(group_name, translation=[x, 0, z])
             self.trees.append(group_name)
 
-        self.forest_grp = cmds.group(self.trees, name="Forest_GRP")
+        self.forest_grp = cmds.group(self.trees, name=self.grp_name)
 
         return self.trees
 
