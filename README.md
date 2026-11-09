@@ -1,3 +1,4 @@
 # Procedural-Forest-Generator
 
-Allows for the creation of simple procedural forests in Maya
+GitHub URL:
+https://github.com/GigiSpells/Procedural_Forest_Generator
