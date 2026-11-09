@@ -19,8 +19,8 @@ class ForestGUI(QtWidgets.QDialog):
 
     def __init__(self):
         super().__init__()
-        self.tree_generator = Tree()
-        self.forest_generator = Forest()
+        self.tree_gen = Tree()
+        self.forest_gen = Forest()
         self.setWindowTitle("Forest Generator")
         self.resize(300,200)
         self.create_layout()
@@ -68,7 +68,7 @@ class ForestGUI(QtWidgets.QDialog):
         self.form_layout.addRow("Canopy Width:", self.canopy_w_dspnbx)
 
         self.grp_name_le = QtWidgets.QLineEdit()
-        self.grp_name_le.setText(self.tree_generator.grp_name)
+        self.grp_name_le.setText(self.tree_gen.grp_name)
         self.form_layout.addRow("Group Name:", self.grp_name_le)
 
         self.main_lay.addLayout(self.form_layout)
@@ -80,13 +80,19 @@ class ForestGUI(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def create(self):
-        self.tree_generator.type = self.forest_type_cmbobx.currentText()
-        self.tree_generator.trunk_height = self.trunk_h_dspnbx.value()
-        self.tree_generator.trunk_width = self.trunk_w_dspnbx.value()
-        self.tree_generator.canopy_height = self.canopy_h_dspnbx.value()
-        self.tree_generator.canopy_width = self.canopy_w_dspnbx.value()
-        self.tree_generator.grp_name = self.grp_name_le.text()
-        self.tree_generator.create()
+        self.forest_gen.type = self.forest_type_cmbobx.currentText()
+        self.forest_gen.size = self.size_cmbobx.currentText()
+        self.forest_gen.density = self.density_cmbobx.currentText()
+
+
+
+        self.tree_gen.type = self.forest_type_cmbobx.currentText()
+        self.tree_gen.trunk_height = self.trunk_h_dspnbx.value()
+        self.tree_gen.trunk_width = self.trunk_w_dspnbx.value()
+        self.tree_gen.canopy_height = self.canopy_h_dspnbx.value()
+        self.tree_gen.canopy_width = self.canopy_w_dspnbx.value()
+        self.tree_gen.grp_name = self.grp_name_le.text()
+        self.tree_gen.create()
 
 # Tree() TODO:
 # Add second polyCube to oak canopy for more dynamic oak canopies
@@ -174,21 +180,23 @@ class Tree():
 class Forest():
 
     def __init__(self):
-        #self.type = ForestGUI.forest_type_cmbobx.currentText()
+        self.type = "Oak"
+        self.potential_tree_types = ["Oak", "Pine"]
+        self.size = self.define_size_modifier()
+        self.density = self.define_density_modifier()
         self.trunk_height_range = 0
         self.trunk_width_range = 0
         self.canopy_height_range = 0
         self.canopy_width_range = 0
-        self.size = "Small"
-        self.density = 0
-        self.tree_types = ["Oak", "Pine", "Mixed"]
         self.trees = []
+        self.tree = Tree(self.type)
 
 
     def create_trees(self):
-        self.tree = Tree(self.type)
-        
-        pass
+        if self.type == "Mixed":
+            self.tree.type = 
+        if len(self.trees) <= self.size:
+            self.trees.append(self.tree.create())
 
 
     def distribute_trees(self):
@@ -198,6 +206,30 @@ class Forest():
     def create(self):
         pass
 
+
+    def define_size_modifier(self):
+        if self.size == "Small":
+            self.size_modifer = 8
+        if self.size == "Medium":
+            self.size_modifer = 16
+        if self.size == "Large":
+            self.size_modifer = 24
+        return self.size_modifer
+
+    def define_density_modifier(self):
+        if self.size == "Sparse":
+            self.size_modifer = 8
+        if self.size == "Average":
+            self.size_modifer = 16
+        if self.size == "Dense":
+            self.size_modifer = 24
+        return self.density_modifer
+
+    def define_tree_type(self):
+        if self.type == "Oak":
+            return self.create_oak_canopy()
+        if self.type == "Pine":
+            return self.create_pine_canopy()
 
 # This class needs to:
 # Create an instance of 1+ trees based on user configurations 
