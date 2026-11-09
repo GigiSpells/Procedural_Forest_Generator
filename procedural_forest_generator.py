@@ -20,7 +20,7 @@ class ForestGUI(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.tree_generator = Tree()
-        #self.forest_generator = Forest()
+        self.forest_generator = Forest()
         self.setWindowTitle("Forest Generator")
         self.resize(300,200)
         self.create_layout()
@@ -42,6 +42,14 @@ class ForestGUI(QtWidgets.QDialog):
         self.forest_type_cmbobx = QtWidgets.QComboBox()
         self.forest_type_cmbobx.addItems(["Oak","Pine","Mixed"])
         self.form_layout.addRow("Forest Type:", self.forest_type_cmbobx)
+
+        self.size_cmbobx = QtWidgets.QComboBox()
+        self.size_cmbobx.addItems(["Small","Medium","Large"])
+        self.form_layout.addRow("Size:", self.size_cmbobx)
+
+        self.density_cmbobx = QtWidgets.QComboBox()
+        self.density_cmbobx.addItems(["Sparse","Average","Dense"])
+        self.form_layout.addRow("Density:", self.density_cmbobx)
 
         self.trunk_h_dspnbx = QtWidgets.QDoubleSpinBox()
         self.trunk_h_dspnbx.setValue(2.5)
@@ -97,10 +105,10 @@ class Tree():
 
 
     def create(self):
-        group_objs = []
-        group_objs.append(self.create_trunk())
-        group_objs.append(self.define_tree_type())
-        cmds.group(group_objs, name=self.grp_name)
+        objects = []
+        objects.append(self.create_trunk())
+        objects.append(self.define_tree_type())
+        return cmds.group(objects, name=self.grp_name)
 
 
     def create_trunk(self):
@@ -121,13 +129,16 @@ class Tree():
         self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
                         ,width=self.canopy_width, depth=self.canopy_width)
         cmds.xform(self.canopy_obj, pivots=[0, -self.canopy_height/2.0,0])
+        cmds.xform(translation=[0,self.trunk_height,0])
         cmds.xform(self.canopy_obj, translation=[0,self.trunk_height,0])
         
-        self.canopy2_obj = cmds.duplicate(self.canopy_obj, name="canopy2")
-        cmds.xform(self.canopy2_obj, translation=[0,self.canopy_height*1.6,0])
+        # self.canopy2_obj = cmds.duplicate(self.canopy_obj, name="canopy2")
+        # cmds.xform(self.canopy2_obj, translation=[5,0,0])
+        # cmds.xform(translation=[0,self.trunk_height,0])
 
-        self.canopy_grp = cmds.group(self.canopy_obj,self.canopy2_obj, name="canopy_GRP")
-        return self.canopy_grp
+        return self.canopy_obj
+        # self.canopy_grp = cmds.group(self.canopy_obj,self.canopy2_obj, name="canopy_GRP")
+        # return self.canopy_grp
 
 
     def create_pine_canopy(self):
@@ -168,12 +179,15 @@ class Forest():
         self.trunk_width_range = 0
         self.canopy_height_range = 0
         self.canopy_width_range = 0
+        self.size = "Small"
         self.density = 0
         self.tree_types = ["Oak", "Pine", "Mixed"]
         self.trees = []
 
+
     def create_trees(self):
         self.tree = Tree(self.type)
+        
         pass
 
 
