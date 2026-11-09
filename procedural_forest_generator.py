@@ -83,16 +83,16 @@ class ForestGUI(QtWidgets.QDialog):
         self.forest_gen.type = self.forest_type_cmbobx.currentText()
         self.forest_gen.size = self.size_cmbobx.currentText()
         self.forest_gen.density = self.density_cmbobx.currentText()
+        self.forest_gen.create()
 
 
-
-        self.tree_gen.type = self.forest_type_cmbobx.currentText()
-        self.tree_gen.trunk_height = self.trunk_h_dspnbx.value()
-        self.tree_gen.trunk_width = self.trunk_w_dspnbx.value()
-        self.tree_gen.canopy_height = self.canopy_h_dspnbx.value()
-        self.tree_gen.canopy_width = self.canopy_w_dspnbx.value()
-        self.tree_gen.grp_name = self.grp_name_le.text()
-        self.tree_gen.create()
+        # self.tree_gen.type = self.forest_type_cmbobx.currentText()
+        # self.tree_gen.trunk_height = self.trunk_h_dspnbx.value()
+        # self.tree_gen.trunk_width = self.trunk_w_dspnbx.value()
+        # self.tree_gen.canopy_height = self.canopy_h_dspnbx.value()
+        # self.tree_gen.canopy_width = self.canopy_w_dspnbx.value()
+        # self.tree_gen.grp_name = self.grp_name_le.text()
+        # self.tree_gen.create()
 
 # Tree() TODO:
 # Add second polyCube to oak canopy for more dynamic oak canopies
@@ -181,55 +181,48 @@ class Forest():
 
     def __init__(self):
         self.type = "Oak"
-        self.potential_tree_types = ["Oak", "Pine"]
-        self.size = self.define_size_modifier()
-        self.density = self.define_density_modifier()
+        self.tree_types = ["Oak", "Pine"]
+        self.size_counts = {
+            "Small": 8,
+            "Medium": 16,
+            "Large": 24,
+        }
+        self.density_spacing = {
+            "Sparse": 4.0,
+            "Average": 2.5,
+            "Dense": 1.5
+        }
+        self.size = "Small"
+        self.density = "Average"
         self.trunk_height_range = 0
         self.trunk_width_range = 0
         self.canopy_height_range = 0
         self.canopy_width_range = 0
         self.trees = []
-        self.tree = Tree(self.type)
 
 
     def create_trees(self):
-        if self.type == "Mixed":
-            self.tree.type = 
-        if len(self.trees) <= self.size:
-            self.trees.append(self.tree.create())
+        count = self.size_counts[self.size]
+        spacing = self.density_spacing[self.density]
+
+        for i in range(count):
+            tree_type = (
+                random.choice(self.tree_types())
+                if self.type == "Mixed"
+                else self.type
+            )
+            tree = Tree(tree_type)
+            tree.grp_name = f"tree{i + 1}"
+            tree.create()
 
 
     def distribute_trees(self):
+        #for t in self.trees:
         pass
 
 
     def create(self):
-        pass
-
-
-    def define_size_modifier(self):
-        if self.size == "Small":
-            self.size_modifer = 8
-        if self.size == "Medium":
-            self.size_modifer = 16
-        if self.size == "Large":
-            self.size_modifer = 24
-        return self.size_modifer
-
-    def define_density_modifier(self):
-        if self.size == "Sparse":
-            self.size_modifer = 8
-        if self.size == "Average":
-            self.size_modifer = 16
-        if self.size == "Dense":
-            self.size_modifer = 24
-        return self.density_modifer
-
-    def define_tree_type(self):
-        if self.type == "Oak":
-            return self.create_oak_canopy()
-        if self.type == "Pine":
-            return self.create_pine_canopy()
+        self.create_trees()
 
 # This class needs to:
 # Create an instance of 1+ trees based on user configurations 
