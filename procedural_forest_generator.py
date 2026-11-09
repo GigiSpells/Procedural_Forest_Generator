@@ -174,9 +174,7 @@ class Tree():
             return self.create_pine_canopy()
 
 # Forest() TODO:
-# Initialize appropriate methods
-# Access Tree.type() to produce correct trees
-# Create loops that generate and distrubute trees
+# Create loops that distrubute trees
 # Prevent excessive tree overlap
 # Coordinate with ForestGUI()
 
@@ -217,6 +215,13 @@ class Forest():
             tree = Tree(tree_type)
             tree.grp_name = f"tree{i + 1}"
             tree.create()
+
+            columns = max(1, int(count ** 0.5))
+            x = (i % columns) * spacing
+            z = (i // columns) * spacing
+            cmds.xform(tree.grp_name, translation=[x, 0, z])
+
+            self.trees.append(tree.grp_name)
 
     def distribute_trees(self):
         #for t in self.trees:
