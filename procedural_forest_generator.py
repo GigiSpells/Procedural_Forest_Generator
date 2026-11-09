@@ -100,6 +100,7 @@ class ForestGUI(QtWidgets.QDialog):
 class Tree():
 
     def __init__(self, type="Oak"):
+        self.tree_types = ["Oak", "Pine"]
         self.type = type
         self.trunk_height = 2.5
         self.trunk_width = .25
@@ -165,9 +166,11 @@ class Tree():
 
 
     def define_tree_type(self):
-        if self.type == "Oak":
+        if self.type == "Mixed":
+            self.type = random.choice(self.tree_types)
+        elif self.type == "Oak":
             return self.create_oak_canopy()
-        if self.type == "Pine":
+        elif self.type == "Pine":
             return self.create_pine_canopy()
 
 # Forest() TODO:
@@ -207,14 +210,13 @@ class Forest():
 
         for i in range(count):
             tree_type = (
-                random.choice(self.tree_types())
+                random.choice(self.tree_types)
                 if self.type == "Mixed"
                 else self.type
             )
             tree = Tree(tree_type)
             tree.grp_name = f"tree{i + 1}"
             tree.create()
-
 
     def distribute_trees(self):
         #for t in self.trees:
