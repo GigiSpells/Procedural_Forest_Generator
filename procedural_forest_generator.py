@@ -107,12 +107,12 @@ class Tree():
         self.trunk_obj, self.trunk_node = cmds.polyCube(name="trunk",height=self.trunk_height
                         ,width=self.trunk_width, depth=self.trunk_width)
         cmds.xform(self.trunk_obj, pivots=[0, -self.trunk_height/2.0,0])
-        cmds.xform(translation=[0,self.trunk_height/2.0,0])
-        cmds.select("trunk")
-        cmds.polyMoveEdge("trunk.e[1]", translateZ=-self.trunk_taper)
-        cmds.polyMoveEdge("trunk.e[2]", translateZ=self.trunk_taper)
-        cmds.polyMoveEdge("trunk.e[6]", translateX=self.trunk_taper)
-        cmds.polyMoveEdge("trunk.e[7]", translateX=-self.trunk_taper)
+        cmds.xform(self.trunk_obj, translation=[0,self.trunk_height/2.0,0])
+        
+        cmds.polyMoveEdge(f"{self.trunk_obj}.e[1]", translateZ=-self.trunk_taper)
+        cmds.polyMoveEdge(f"{self.trunk_obj}.e[2]", translateZ=self.trunk_taper)
+        cmds.polyMoveEdge(f"{self.trunk_obj}.e[6]", translateX=self.trunk_taper)
+        cmds.polyMoveEdge(f"{self.trunk_obj}.e[7]", translateX=-self.trunk_taper)
 
         return self.trunk_obj
         
@@ -121,9 +121,13 @@ class Tree():
         self.canopy_obj, self.canopy_node = cmds.polyCube(name="canopy",height=self.canopy_height
                         ,width=self.canopy_width, depth=self.canopy_width)
         cmds.xform(self.canopy_obj, pivots=[0, -self.canopy_height/2.0,0])
-        cmds.xform(translation=[0,self.trunk_height,0])
+        cmds.xform(self.canopy_obj, translation=[0,self.trunk_height,0])
+        
+        self.canopy2_obj = cmds.duplicate(self.canopy_obj, name="canopy2")
+        cmds.xform(self.canopy2_obj, translation=[0,self.canopy_height*1.6,0])
 
-        return self.canopy_obj
+        self.canopy_grp = cmds.group(self.canopy_obj,self.canopy2_obj, name="canopy_GRP")
+        return self.canopy_grp
 
 
     def create_pine_canopy(self):
@@ -131,10 +135,10 @@ class Tree():
                         ,width=self.canopy_width, depth=self.canopy_width)
         cmds.xform(self.canopy_obj, pivots=[0, -self.canopy_height/2.0,0])
         cmds.xform(translation=[0,self.trunk_height,0])
-        cmds.polyMoveEdge("canopy.e[1]", translateZ=-self.canopy_width/4)
-        cmds.polyMoveEdge("canopy.e[2]", translateZ=self.canopy_width/4)
-        cmds.polyMoveEdge("canopy.e[6]", translateX=self.canopy_width/4)
-        cmds.polyMoveEdge("canopy.e[7]", translateX=-self.canopy_width/4)
+        cmds.polyMoveEdge(f"{self.canopy_obj}.e[1]", translateZ=-self.canopy_width/4)
+        cmds.polyMoveEdge(f"{self.canopy_obj}.e[2]", translateZ=self.canopy_width/4)
+        cmds.polyMoveEdge(f"{self.canopy_obj}.e[6]", translateX=self.canopy_width/4)
+        cmds.polyMoveEdge(f"{self.canopy_obj}.e[7]", translateX=-self.canopy_width/4)
 
         self.canopy2_obj = cmds.duplicate(self.canopy_obj, name="canopy2")
         cmds.xform(self.canopy2_obj, translation=[0,self.canopy_height*1.6,0])
