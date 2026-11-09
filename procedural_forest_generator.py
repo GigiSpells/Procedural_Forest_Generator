@@ -183,15 +183,25 @@ class Forest():
     def __init__(self):
         self.type = "Oak"
         self.tree_types = ["Oak", "Pine"]
-        self.size_counts = {
-            "Small": 8,
-            "Medium": 16,
-            "Large": 24,
+        # self.size_counts = {
+        #     "Small": 8,
+        #     "Medium": 16,
+        #     "Large": 24,
+        # }
+        # self.density_spacing = {
+        #     "Sparse": 4.0,
+        #     "Average": 2.5,
+        #     "Dense": 1.5
+        # }
+        self.area_size = {
+            "Small": 200.0,
+            "Medium": 400.0,
+            "Large": 600.0,
         }
-        self.density_spacing = {
-            "Sparse": 4.0,
-            "Average": 2.5,
-            "Dense": 1.5
+        self.min_spacing = {
+            "Sparse": 80.0,
+            "Average": 45.0,
+            "Dense": 25.0
         }
         self.size = "Small"
         self.density = "Average"
@@ -203,8 +213,12 @@ class Forest():
 
 
     def create_trees(self):
-        count = self.size_counts[self.size]
-        spacing = self.density_spacing[self.density]
+        # count = self.size_counts[self.size]
+        # spacing = self.density_spacing[self.density]
+        area = self.area_size[self.size]
+        min_spacing = self.min_spacing[self.density]
+
+        # rework to have more organic spacing
 
         for i in range(count):
             tree_type = (
@@ -216,21 +230,36 @@ class Forest():
             tree.grp_name = f"tree{i + 1}"
             tree.create()
 
-            columns = max(1, int(count ** 0.5))
-            x = (i % columns) * spacing
-            z = (i // columns) * spacing
-            cmds.xform(tree.grp_name, translation=[x, 0, z])
+            #uniform grid no bueno
+            # columns = max(1, int(count ** 0.5))
+            # x = (i % columns) * spacing
+            # z = (i // columns) * spacing
+            # cmds.xform(tree.grp_name, translation=[x, 0, z])
+
+
 
             self.trees.append(tree.grp_name)
 
-    def distribute_trees(self):
-        #for t in self.trees:
-        pass
+    def _get_random_pos(self, count, area, min_spacing):
+        positions = []
+        half = area / 2
+        min_spacing_sq = min_spacing ** 2
+
+        while len(positions) < count:
+
+            x = random.uniform(-half, half)
+            z = random.uniform(-half, half)
+
+            far_enough = all(
+                (x - px) ** 2 + (z - pz) ** 2 >= min_spacing_sq
+                for px, pz in positions
+            )
+
+            if far_enough:
+                positions.append((x,z))
+
+        return positions
 
 
     def create(self):
         self.create_trees()
-
-# This class needs to:
-# Create an instance of 1+ trees based on user configurations 
-# "Mixed" Forest chooses tree type at random 
