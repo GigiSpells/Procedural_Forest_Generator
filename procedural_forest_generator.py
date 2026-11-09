@@ -35,7 +35,66 @@ class ForestGUI(QtWidgets.QDialog):
         self.setLayout(self.main_lay)
 
 
+    def _set_trunk_parameters(self):
+
+        self.trunk_h_min = QtWidgets.QDoubleSpinBox()
+        self.trunk_h_min.setRange(0.1, 10.0)
+        self.trunk_h_min.setDecimals(2)
+        self.trunk_h_min.setSingleStep(0.1)
+        self.trunk_h_min.setValue(2.0)
+
+        self.trunk_h_max = QtWidgets.QDoubleSpinBox()
+        self.trunk_h_max.setRange(0.1, 10.0)
+        self.trunk_h_max.setDecimals(2)
+        self.trunk_h_max.setSingleStep(0.1)
+        self.trunk_h_max.setValue(3.0)
+
+
+        self.trunk_w_min = QtWidgets.QDoubleSpinBox()
+        self.trunk_w_min.setRange(0.1, 10.0)
+        self.trunk_w_min.setDecimals(2)
+        self.trunk_w_min.setSingleStep(0.1)
+        self.trunk_w_min.setValue(2.0)
+
+        self.trunk_w_max = QtWidgets.QDoubleSpinBox()
+        self.trunk_w_max.setRange(0.1, 10.0)
+        self.trunk_w_max.setDecimals(2)
+        self.trunk_w_max.setSingleStep(0.1)
+        self.trunk_w_max.setValue(3.0)
+
+
+    def _set_canopy_parameters(self):
+
+        self.canopy_h_min = QtWidgets.QDoubleSpinBox()
+        self.canopy_h_min.setRange(0.1, 10.0)
+        self.canopy_h_min.setDecimals(2)
+        self.canopy_h_min.setSingleStep(0.1)
+        self.canopy_h_min.setValue(2.0)
+
+        self.canopy_h_max = QtWidgets.QDoubleSpinBox()
+        self.canopy_h_max.setRange(0.1, 10.0)
+        self.canopy_h_max.setDecimals(2)
+        self.canopy_h_max.setSingleStep(0.1)
+        self.canopy_h_max.setValue(3.0)
+
+        self.canopy_w_min = QtWidgets.QDoubleSpinBox()
+        self.canopy_w_min.setRange(0.1, 10.0)
+        self.canopy_w_min.setDecimals(2)
+        self.canopy_w_min.setSingleStep(0.1)
+        self.canopy_w_min.setValue(2.0)
+
+        self.canopy_w_max = QtWidgets.QDoubleSpinBox()
+        self.canopy_w_max.setRange(0.1, 10.0)
+        self.canopy_w_max.setDecimals(2)
+        self.canopy_w_max.setSingleStep(0.1)
+        self.canopy_w_max.setValue(3.0)
+
+
     def _form_ui(self):
+
+        self._set_trunk_parameters()
+        self._set_canopy_parameters()
+
         self.form_layout = QtWidgets.QFormLayout()
 
         #Add connection
@@ -51,21 +110,17 @@ class ForestGUI(QtWidgets.QDialog):
         self.density_cmbobx.addItems(["Sparse","Average","Dense"])
         self.form_layout.addRow("Density:", self.density_cmbobx)
 
-        self.trunk_h_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.trunk_h_dspnbx.setValue(2.5)
-        self.form_layout.addRow("Trunk Height:", self.trunk_h_dspnbx)
+        self.form_layout.addRow("Trunk Height Min:", self.trunk_h_min)
+        self.form_layout.addRow("Trunk Height Max:", self.trunk_h_max)
 
-        self.trunk_w_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.trunk_w_dspnbx.setValue(.25)
-        self.form_layout.addRow("Trunk Width:", self.trunk_w_dspnbx)
+        self.form_layout.addRow("Trunk Width Min:", self.trunk_w_min)
+        self.form_layout.addRow("Trunk Width Max:", self.trunk_w_max)
 
-        self.canopy_h_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.canopy_h_dspnbx.setValue(2.0)
-        self.form_layout.addRow("Canopy Height:", self.canopy_h_dspnbx)
+        self.form_layout.addRow("Canopy Height Min:", self.canopy_h_min)
+        self.form_layout.addRow("Canopy Height Max:", self.canopy_h_max)
 
-        self.canopy_w_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.canopy_w_dspnbx.setValue(2.0)
-        self.form_layout.addRow("Canopy Width:", self.canopy_w_dspnbx)
+        self.form_layout.addRow("Canopy Width Min:", self.canopy_w_min)
+        self.form_layout.addRow("Canopy Width Max:", self.canopy_w_max)
 
         self.grp_name_le = QtWidgets.QLineEdit()
         self.grp_name_le.setText(self.tree_gen.grp_name)
@@ -83,19 +138,9 @@ class ForestGUI(QtWidgets.QDialog):
         self.forest_gen.type = self.forest_type_cmbobx.currentText()
         self.forest_gen.size = self.size_cmbobx.currentText()
         self.forest_gen.density = self.density_cmbobx.currentText()
+        
         self.forest_gen.create()
 
-
-        # self.tree_gen.type = self.forest_type_cmbobx.currentText()
-        # self.tree_gen.trunk_height = self.trunk_h_dspnbx.value()
-        # self.tree_gen.trunk_width = self.trunk_w_dspnbx.value()
-        # self.tree_gen.canopy_height = self.canopy_h_dspnbx.value()
-        # self.tree_gen.canopy_width = self.canopy_w_dspnbx.value()
-        # self.tree_gen.grp_name = self.grp_name_le.text()
-        # self.tree_gen.create()
-
-# Tree() TODO:
-# Add second polyCube to oak canopy for more dynamic oak canopies
 
 class Tree():
 
