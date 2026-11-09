@@ -174,8 +174,6 @@ class Tree():
             return self.create_pine_canopy()
 
 # Forest() TODO:
-# Create loops that distrubute trees
-# Prevent excessive tree overlap
 # Coordinate with ForestGUI()
 
 class Forest():
@@ -183,25 +181,15 @@ class Forest():
     def __init__(self):
         self.type = "Oak"
         self.tree_types = ["Oak", "Pine"]
-        # self.size_counts = {
-        #     "Small": 8,
-        #     "Medium": 16,
-        #     "Large": 24,
-        # }
-        # self.density_spacing = {
-        #     "Sparse": 4.0,
-        #     "Average": 2.5,
-        #     "Dense": 1.5
-        # }
         self.area_size = {
-            "Small": 200.0,
-            "Medium": 400.0,
-            "Large": 600.0,
+            "Small": 50.0,
+            "Medium": 100.0,
+            "Large": 150.0,
         }
         self.min_spacing = {
-            "Sparse": 80.0,
-            "Average": 45.0,
-            "Dense": 25.0
+            "Sparse": 20.0,
+            "Average": 11.25,
+            "Dense": 6.25
         }
         self.size = "Small"
         self.density = "Average"
@@ -213,32 +201,35 @@ class Forest():
 
 
     def create_trees(self):
-        # count = self.size_counts[self.size]
-        # spacing = self.density_spacing[self.density]
         area = self.area_size[self.size]
         min_spacing = self.min_spacing[self.density]
 
-        # rework to have more organic spacing
+        target_count = max(1, int((area / min_spacing) ** 2 * 0.5))
 
-        for i in range(count):
+        positions = self._get_random_pos(
+            count = target_count,
+            area = area,
+            min_spacing = min_spacing
+        )
+
+        for i, (x, z) in enumerate(positions):
             tree_type = (
                 random.choice(self.tree_types)
                 if self.type == "Mixed"
                 else self.type
             )
+
             tree = Tree(tree_type)
             tree.grp_name = f"tree{i + 1}"
-            tree.create()
+            group_name = tree.create()
 
-            #uniform grid no bueno
-            # columns = max(1, int(count ** 0.5))
-            # x = (i % columns) * spacing
-            # z = (i // columns) * spacing
-            # cmds.xform(tree.grp_name, translation=[x, 0, z])
+            cmds.xform(group_name, translation=[x, 0, z])
+            self.trees.append(group_name)
 
+        self.forest_grp = cmds.group(self.trees, name="Forest_GRP")
 
+        return self.trees
 
-            self.trees.append(tree.grp_name)
 
     def _get_random_pos(self, count, area, min_spacing):
         positions = []
